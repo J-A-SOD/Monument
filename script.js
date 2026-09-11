@@ -1,7 +1,12 @@
 // ---- Config ----
-// Point this at your own 3D object. Keeping the variable/file name generic
-// as "placeholder" so you can just swap the file without renaming code.
-const PLACEHOLDER_MODEL_PATH = "/assets/models/PlaceholderContext";
+// Three separate GLB models, each placed side by side in the scene.
+// Point each at your actual file — kept generically named as "placeholder"
+// so you can just swap files without renaming code.
+const MODELS = [
+  { key: "context",  path: "./assets/models/PlaceholderContext.glb",  x: 0 },
+  { key: "monument", path: "./assets/models/PlaceholderMonument.glb", x: 0 },
+  { key: "detail",   path: "./assets/models/PlaceholderDetail.glb",   x: 0 }
+];
 
 const container = document.getElementById('canvas-container');
 const loadingEl = document.getElementById('loading');
@@ -16,14 +21,14 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.set(4, 3, 5);
+camera.position.set(0, 4, 11);
+camera.lookAt(0, 0.5, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
 container.appendChild(renderer.domElement);
-camera.lookAt(0, 0.5, 0);
 
 // ---- Lighting ----
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -42,56 +47,48 @@ fillLight.position.set(-5, 3, -5);
 scene.add(fillLight);
 
 // ---- Ground plane ----
-const groundGeo = new THREE.PlaneGeometry(30, 30);
+const groundGeo = new THREE.PlaneGeometry(40, 40);
 const groundMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.9 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-const grid = new THREE.GridHelper(30, 30, 0x444444, 0x333333);
+const grid = new THREE.GridHelper(40, 40, 0x444444, 0x333333);
 scene.add(grid);
 
-// ---- Placeholder object ----
-// This box shows instantly while your real model loads (or if it fails to
-// load / hasn't been added yet). Once GLTFLoader succeeds, it's removed.
-let placeholder = null;
-{
+// ---- Helpers ----
+function makePlaceholderBox(xOffset, color) {
   const geo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
-  const mat = new THREE.MeshStandardMaterial({
-    color: 0x4f8ef7,
-    roughness: 0.4,
-    metalness: 0.2
-  });
-  placeholder = new THREE.Mesh(geo, mat);
-  placeholder.position.set(0, 0.75, 0);
-  placeholder.castShadow = true;
-  placeholder.name = "placeholder-box";
-  scene.add(placeholder);
+  const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.4, metalness: 0.2 });
+  const box = new THREE.Mesh(geo, mat);
+  box.position.set(xOffset, 0.75, 0);
+  box.castShadow = true;
+  return box;
 }
 
-// ---- Load your actual model, replacing the placeholder box ----
-function centerAndFrameObject(object) {
+function groundObject(object, xOffset) {
   const box = new THREE.Box3().setFromObject(object);
   const size = new THREE.Vector3();
   const center = new THREE.Vector3();
   box.getSize(size);
   box.getCenter(center);
 
-  // Sit the object on the ground plane, centered at the origin.
-  object.position.x -= center.x;
+  // Center on its own x slot, sit on the ground plane, keep original z centered.
+  object.position.x += xOffset - center.x;
   object.position.z -= center.z;
   object.position.y -= box.min.y;
-
-  camera.lookAt(0, size.y / 2, 0);
 }
 
-function loadPlaceholderModel() {
-  const loader = new THREE.GLTFLoader();
-  loadingEl.style.display = 'block';
+const BOX_COLORS = { context: 0x7d7d7d, monument: 0x4f8ef7, detail: 0xf7a44f };
 
+function loadModel({ key, path, x }) {
+  let placeholderBox = makePlaceholderBox(x, BOX_COLORS[key] || 0x4f8ef7);
+  scene.add(placeholderBox);
+
+  const loader = new THREE.GLTFLoader();
   loader.load(
-    PLACEHOLDER_MODEL_PATH,
+    path,
     (gltf) => {
       const model = gltf.scene;
       model.traverse((node) => {
@@ -101,28 +98,22 @@ function loadPlaceholderModel() {
         }
       });
 
-      if (placeholder) {
-        scene.remove(placeholder);
-        placeholder.geometry.dispose();
-        placeholder.material.dispose();
-        placeholder = null;
-      }
+      scene.remove(placeholderBox);
+      placeholderBox.geometry.dispose();
+      placeholderBox.material.dispose();
 
       scene.add(model);
-      centerAndFrameObject(model);
-      loadingEl.style.display = 'none';
+      groundObject(model, x);
     },
     undefined,
     (error) => {
-      // No model found yet (or failed to load) — keep the placeholder box.
-      console.warn(`Could not load ${PLACEHOLDER_MODEL_PATH}; showing placeholder box instead.`, error);
-      loadingEl.textContent = "Using placeholder box (model not found)";
-      setTimeout(() => { loadingEl.style.display = 'none'; }, 2000);
+      // Model not found yet (or failed to load) — keep showing its placeholder box.
+      console.warn(`Could not load "${key}" model at ${path}; showing placeholder box instead.`, error);
     }
   );
 }
 
-loadPlaceholderModel();
+MODELS.forEach(loadModel);
 
 // ---- Resize handling ----
 window.addEventListener('resize', () => {
