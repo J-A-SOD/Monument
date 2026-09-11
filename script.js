@@ -13,7 +13,6 @@ const loadingEl = document.getElementById('loading');
 
 // ---- Scene / Camera / Renderer ----
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a1a1a);
 
 const camera = new THREE.PerspectiveCamera(
   50,
@@ -24,9 +23,10 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 4, 11);
 camera.lookAt(0, 0.5, 0);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0x000000, 0);
 renderer.shadowMap.enabled = true;
 container.appendChild(renderer.domElement);
 
