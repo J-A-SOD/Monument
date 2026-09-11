@@ -1,5 +1,23 @@
 
-@font-face {
+/* @font-face {
   font-family: "Satoshi";
   src: url("./assets/fonts/Satoshi-Variable.woff2") format("woff2");
+} */
+
+#canvas-container {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+ 
+#loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #eee;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px 18px;
+  border-radius: 8px;
 }
