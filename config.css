@@ -1,5 +1,28 @@
 :root {
 
-    --BG: ;
+    --SidebarBackground: hsla(240, 18%, 10%, 0.603);
+    --SidebarWidth: 20vw;
+    --SidebarBlur: 12px;
+    --SidebarBorderWidth: 1px;
+    --SidebarBorderColour: hsla(0, 0%, 100%, 0.46);
+    --SidebarRadius: 10px;
+
+
+    --SubtitleFont: Satoshi;
+    --SubtitleFontSize: 1.5vw;
+    --SubtitleFontWeight: 900;
+    --SubtitleFontColour: hsl(0, 5%, 18%);
+
+    --LinkFont: Satoshi;
+    --LinkFontSize: 1vw;
+    --LinkFontWeight: 200;
+    --LinkFontColour: hsl(0, 9%, 34%);
+
+    --LinkHoverBackgroundColour: hsl(0, 35%, 88%);;
+    --LinkHoverColour: hsl(0, 30%, 45%);;
+    
+    --LinkActiveBackgroundColour: hsl(0, 22%, 70%);;
+    --LinkActiveColour: hsl(0, 61%, 24%);;
 
 }
+

@@ -23,16 +23,36 @@ Johannes Soderstrom
 AMNE 377 Final Assignment
 
 <body>
-    <div id="canvas-container"></div>
-    <div id="loading" style="display:none;">Loading model…</div>
-    
+ 
+
+
+   <div class="side-content">
+
+        <aside class="sidebar">
+        
+            <div class="nav-group">
+                <div class="nav-group-title">Contents</div>
+                <a href="#" class="nav-link active" data-page="written">Interactive Model</a>
+                <a href="#" class="nav-link" data-page="disclaimer">Written Portion</a>
+                <a href="#" class="nav-link" data-page="disclaimer">Drawings</a>
+                <a href="#" class="nav-link" data-page="disclaimer">References/Credits</a>
+            </div>
+
+        </aside>
+
+        <main class="content" id="content">
+          <div id="canvas-container"></div>
+         <div id="loading" style="display:none;">Loading model…</div>
+        </main>
+
+    </div>
     <!-- Local Three.js files -->
     <script src="lib/three.min.js"></script>
     <script src="lib/GLTFLoader.js"></script>
     <script src="lib/OrbitControls.js"></script>
     
-   
     <script src="script.js"></script>
+    <script src="mdparse.js"></script>
 </body>
 
 </html>
