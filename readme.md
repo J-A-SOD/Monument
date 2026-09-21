@@ -7,6 +7,10 @@ Components
 - clickable elements that show popup of text and reference image
 - rotates as you scroll once context is gone
 
+- section drawings
+
+likely want to make a sanctuary>??
+
 Written component
 
 References
